@@ -47,7 +47,7 @@ const SEARCH_STRATEGIES: Strategy[] = [
                     searchName.surname,
                     person.dates.birth?.date && `"ur. ${printDateYMD(person.dates.birth.date)}"`,
                     person.dates.death?.date && `"zm. ${printDateYMD(person.dates.death.date)}"`
-                ].filter(Boolean).join('+'));
+                ].filter(Boolean).join(' '));
 
             return url.toString();
         }
