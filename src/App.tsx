@@ -1,5 +1,5 @@
 import type { ChangeEventHandler } from 'react';
-import { memo, useCallback, useRef, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 
 import './index.scss';
 import { Families } from './Families';
@@ -26,15 +26,9 @@ function App() {
         setConfig({ showUtils: event.target.checked });
     }, [setConfig]);
 
-    const inputRef = useRef<HTMLInputElement>(null);
     const onChange: ChangeEventHandler<HTMLInputElement> = event => {
         if (event.target.files?.[0]) {
             parseFile(event.target.files[0]);
-        }
-    };
-    const onReload = () => {
-        if (inputRef.current?.files?.[0]) {
-            parseFile(inputRef.current.files[0]);
         }
     };
 
@@ -42,19 +36,10 @@ function App() {
         <>
             <div>
                 <input
-                    ref={inputRef}
                     type="file"
                     onChange={onChange}
                 />
-                <button
-                    disabled
-                    type="button"
-                    onClick={onReload}
-                >
-                    Try reload
-                </button>
                 <input
-                    disabled
                     type="checkbox"
                     checked={config.showUtils}
                     onChange={handleToggleUtils}
