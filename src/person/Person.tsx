@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
-// import { useConfig } from '../data/config-context';
+import { useConfig } from '../data/config-context';
 import { getAge } from '../data/utils';
 
 import { BirthCell } from './PersonBirth';
@@ -13,6 +13,7 @@ import type { MappedPerson } from './map';
 
 
 function Component({ person }: Props) {
+    const [{ showUtils }] = useConfig();
     return (
         <tr>
             <td>{person.apid}</td>
@@ -26,7 +27,7 @@ function Component({ person }: Props) {
             </td>
             <DeathCell {...person.dates} />
             <BurialCell {...person.dates} />
-            <SearchCell person={person} />
+            {showUtils ? <SearchCell person={person} /> : null}
         </tr>
     );
 }

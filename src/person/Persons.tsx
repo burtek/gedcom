@@ -1,5 +1,6 @@
 import { memo, useMemo } from 'react';
 
+import { useConfig } from '../data/config-context';
 import { useContextData } from '../data/data-context';
 import type { Person, PersonKey, RootData } from '../data/data-types';
 import { EntryType } from '../data/data-types';
@@ -10,6 +11,7 @@ import { mapPerson } from './map';
 
 const Component = ({ show = false }) => {
     const data = useContextData();
+    const [{ showUtils }] = useConfig();
 
     const persons = useMemo(
         () => data && Object.entries(data)
@@ -41,7 +43,7 @@ const Component = ({ show = false }) => {
                     <th>(age)</th>
                     <th>death</th>
                     <th>burrial</th>
-                    <th>Utils</th>
+                    {showUtils ? <th>Utils</th> : null}
                 </tr>
             </thead>
             <tbody>

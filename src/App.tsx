@@ -22,8 +22,8 @@ function App() {
     const parseFile = useContextDataSetter();
 
     const [config, setConfig] = useConfig();
-    const handleToggleGrobonet = useCallback<ChangeEventHandler<HTMLInputElement>>(event => {
-        setConfig({ grobonet: event.target.checked });
+    const handleToggleUtils = useCallback<ChangeEventHandler<HTMLInputElement>>(event => {
+        setConfig({ showUtils: event.target.checked });
     }, [setConfig]);
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -56,12 +56,12 @@ function App() {
                 <input
                     disabled
                     type="checkbox"
-                    checked={config.grobonet}
-                    onChange={handleToggleGrobonet}
-                    id="grobonet-toggle"
+                    checked={config.showUtils}
+                    onChange={handleToggleUtils}
+                    id="utils-toggle"
                 />
-                <label htmlFor="grobonet-toggle">
-                    Grobonet links (always enabled for now)
+                <label htmlFor="utils-toggle">
+                    Show utils
                 </label>
             </div>
             <div>

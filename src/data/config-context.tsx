@@ -3,9 +3,9 @@ import { createContext, memo, useCallback, useContext, useMemo, useState } from 
 
 
 export interface Settings {
-    grobonet: boolean;
+    showUtils: boolean;
 }
-const initial: Settings = { grobonet: false };
+const initial: Settings = { showUtils: false };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-empty-function
 const ConfigContext = createContext<[config: Settings, setConfig: (data: Partial<Settings>) => void]>([initial, () => {}]);
