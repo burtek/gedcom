@@ -33,7 +33,8 @@ export function mapPerson(apid: PersonKey, raw: RawPerson, data: RootData) {
                         link: source.PAGE.value
                     })) ?? null,
                     date: makeDate(raw.BURI.DATE),
-                    place: raw.BURI.PLAC?.value
+                    place: raw.BURI.PLAC?.value,
+                    check: raw.BURI.TYPE?.value === 'CHECK'
                 }
                 : null,
             death: raw.DEAT

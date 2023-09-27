@@ -31,7 +31,7 @@ const Component = ({ show = false }) => {
                     <th colSpan={3} />
                     <th colSpan={2}>has</th>
                     <th colSpan={4}>dates</th>
-                    <th />
+                    {showUtils ? <th /> : null}
                 </tr>
                 <tr>
                     <th>appID</th>

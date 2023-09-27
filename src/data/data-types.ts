@@ -97,6 +97,7 @@ export interface PersonBurial extends StringValueOnly<null> {
     PLAC?: StringValueOnly;
     // NOTE?: StringValueOnly<NoteKey>;
     SOUR?: SourceReference[];
+    TYPE?: StringValueOnly;
 }
 
 export interface Person extends StringValueOnly<EntryType.INDI>, HasUID {

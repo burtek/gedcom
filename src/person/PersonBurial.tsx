@@ -25,6 +25,7 @@ function Component({ birth, death, burial }: Props) {
 
     return (
         <td className={className}>
+            {burial.check ? <div style={{ color: 'red', fontWeight: 'bold' }}>CHECK!!!</div> : null}
             {burial.date ?? <i>date?</i>}
             <br />
             {burial.place ?? <i>place?</i>}
