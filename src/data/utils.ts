@@ -34,7 +34,9 @@ export function printDateYMD(date: string) {
     const { day, month, year } = result.groups as Partial<Record<string, string>>;
 
     if (day && month) {
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        return dayjs(`${year}-${month}-${day}`)
+            .startOf('day')
+            .format('YYYY-MM-DD');
     }
     return `${year}`;
 }
