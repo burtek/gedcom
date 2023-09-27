@@ -23,7 +23,8 @@ export function mapPerson(apid: PersonKey, raw: RawPerson, data: RootData) {
             birth: raw.BIRT
                 ? {
                     date: makeDate(raw.BIRT.DATE),
-                    place: raw.BIRT.PLAC?.value
+                    place: raw.BIRT.PLAC?.value,
+                    check: raw.BIRT.TYPE?.value === 'CHECK'
                 }
                 : null,
             burial: raw.BURI
@@ -41,7 +42,8 @@ export function mapPerson(apid: PersonKey, raw: RawPerson, data: RootData) {
                 ? {
                     cause: raw.DEAT.CAUS?.value,
                     date: makeDate(raw.DEAT.DATE),
-                    place: raw.DEAT.PLAC?.value
+                    place: raw.DEAT.PLAC?.value,
+                    check: raw.DEAT.TYPE?.value === 'CHECK'
                 }
                 : null
         },

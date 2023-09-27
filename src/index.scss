@@ -8,6 +8,17 @@ body {
     max-height: 100vh;
 }
 
+@keyframes blinkred {
+    0% {
+        background-color: white;
+        color: red;
+    }
+    100% {
+        background-color: red;
+        color: white;
+    }
+}
+
 #root {
     display: grid;
     grid-template-columns: 1fr;
@@ -55,6 +66,11 @@ body {
 
             .person-utils > a {
                 display: block
+            }
+
+            .check {
+                animation: 1s ease-in-out infinite alternate blinkred;
+                font-weight: bold;
             }
         }
     }

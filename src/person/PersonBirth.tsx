@@ -14,6 +14,7 @@ function Component({ birth }: Pick<MappedPerson['dates'], 'birth'>) {
 
     return (
         <td className={className}>
+            {birth?.check ? <div className="check">CHECK!!!</div> : null}
             {birth?.date ?? <i>date?</i>}
             <br />
             {birth?.place ?? <i>place?</i>}

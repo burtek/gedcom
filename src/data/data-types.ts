@@ -86,11 +86,13 @@ export interface PersonName extends StringValueOnly {
 export interface PersonBirth extends StringValueOnly<null> {
     DATE?: DateTime;
     PLAC?: StringValueOnly;
+    TYPE?: StringValueOnly;
 }
 export interface PersonDeath extends StringValueOnly<null> {
     DATE?: DateTime;
     PLAC?: StringValueOnly;
     CAUS?: StringValueOnly;
+    TYPE?: StringValueOnly;
 }
 export interface PersonBurial extends StringValueOnly<null> {
     DATE?: DateTime;
