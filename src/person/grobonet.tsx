@@ -1,7 +1,7 @@
 export const renderLink = (children: React.ReactNode, searchName: SearchName) => (searchName
     ? (
         <a
-            href="https://grobonet.com/index.php?page=wyszukiwanie&imie=Kazimierz&nazw=Sk%C4%99pski&wojewodztwo=&miasto="
+            href={`https://grobonet.com/index.php?page=wyszukiwanie&imie=${searchName.name}&nazw=${searchName.surname}&wojewodztwo=&miasto=`}
             target="_blank"
             rel="noopener noreferrer"
         >
