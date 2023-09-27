@@ -3,19 +3,17 @@ import { Fragment, memo } from 'react';
 
 import { FULL_DATE_REGEXP, getAge } from '../data/utils';
 
-import type { SearchName } from './grobonet';
-import { renderLink } from './grobonet';
 import type { MappedPerson } from './map';
 
 
-function Component({ birth, death, burial, searchName }: Props) {
+function Component({ birth, death, burial }: Props) {
     const age = getAge(birth?.date, death?.date);
     const ageAbove100 = age !== null && age >= 100;
 
     if (!burial) {
         return (
             <td className={classNames({ error: Boolean(death), warn: ageAbove100 })}>
-                {renderLink(<i>no burial?</i>, searchName)}
+                <i>no burial?</i>
             </td>
         );
     }
@@ -27,9 +25,9 @@ function Component({ birth, death, burial, searchName }: Props) {
 
     return (
         <td className={className}>
-            {burial.date ?? renderLink(<i>date?</i>, searchName)}
+            {burial.date ?? <i>date?</i>}
             <br />
-            {burial.place ?? renderLink(<i>place?</i>, searchName)}
+            {burial.place ?? <i>place?</i>}
             <br />
             {burial.links?.map(({ link, name }, index, { length }) => (
                 <Fragment key={link}>
@@ -42,11 +40,11 @@ function Component({ birth, death, burial, searchName }: Props) {
                     </a>
                     {index + 1 < length ? ', ' : ''}
                 </Fragment>
-            )) ?? renderLink(<i>links?</i>, searchName)}
+            )) ?? <i>links?</i>}
         </td>
     );
 }
 Component.displayName = 'BurialCell';
 export const BurialCell = memo(Component);
 
-type Props = MappedPerson['dates'] & { searchName?: SearchName };
+type Props = MappedPerson['dates'];

@@ -26,6 +26,18 @@ function parseDate(date?: string | null) {
     const { day, month, year } = result.groups as Partial<Record<string, string>>;
     return dayjs(`${year}-${month ?? 1}-${day ?? 1}`).startOf('day');
 }
+export function printDateYMD(date: string) {
+    const result = DATE_REGEXP.exec(date);
+    if (!result?.groups) {
+        return null;
+    }
+    const { day, month, year } = result.groups as Partial<Record<string, string>>;
+
+    if (day && month) {
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return `${year}`;
+}
 export function getAge(birth?: string | null, death?: string | null) {
     const parsedBirth = parseDate(birth);
     const parsedDeath = parseDate(death);

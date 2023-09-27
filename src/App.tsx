@@ -54,13 +54,14 @@ function App() {
                     Try reload
                 </button>
                 <input
+                    disabled
                     type="checkbox"
                     checked={config.grobonet}
                     onChange={handleToggleGrobonet}
                     id="grobonet-toggle"
                 />
                 <label htmlFor="grobonet-toggle">
-                    Grobonet links
+                    Grobonet links (always enabled for now)
                 </label>
             </div>
             <div>

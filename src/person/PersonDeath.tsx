@@ -3,19 +3,17 @@ import { memo } from 'react';
 
 import { FULL_DATE_REGEXP, getAge } from '../data/utils';
 
-import type { SearchName } from './grobonet';
-import { renderLink } from './grobonet';
 import type { MappedPerson } from './map';
 
 
-function Component({ birth, death, burial, searchName }: Props) {
+function Component({ birth, death, burial }: Props) {
     const age = getAge(birth?.date, death?.date);
     const ageAbove100 = age !== null && age >= 100;
 
     if (!death) {
         return (
             <td className={classNames({ error: Boolean(burial), warn: ageAbove100 })}>
-                {renderLink(<i>no death?</i>, searchName)}
+                <i>no death?</i>
             </td>
         );
     }
@@ -40,4 +38,4 @@ function Component({ birth, death, burial, searchName }: Props) {
 Component.displayName = 'DeathCell';
 export const DeathCell = memo(Component);
 
-type Props = MappedPerson['dates'] & { searchName?: SearchName };
+type Props = MappedPerson['dates'];

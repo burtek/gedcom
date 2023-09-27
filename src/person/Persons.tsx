@@ -29,6 +29,7 @@ const Component = ({ show = false }) => {
                     <th colSpan={3} />
                     <th colSpan={2}>has</th>
                     <th colSpan={4}>dates</th>
+                    <th />
                 </tr>
                 <tr>
                     <th>appID</th>
@@ -40,6 +41,7 @@ const Component = ({ show = false }) => {
                     <th>(age)</th>
                     <th>death</th>
                     <th>burrial</th>
+                    <th>Utils</th>
                 </tr>
             </thead>
             <tbody>
