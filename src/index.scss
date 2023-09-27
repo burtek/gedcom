@@ -1,0 +1,57 @@
+* {
+    box-sizing: border-box;
+}
+
+$margin: 8px;
+body {
+    margin: $margin;
+    max-height: 100vh;
+}
+
+#root {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content min-content 1fr;
+    max-height: calc(100vh - #{2 * $margin});
+    gap: 4px;
+
+    .data {
+        overflow: auto;
+
+        table {
+            border-spacing: 0;
+            border-collapse: separate;
+
+            td, th {
+                background-color: white;
+                border-bottom: 1px solid black;
+                border-left: 1px solid black;
+
+                &:last-child {
+                    border-right: 1px solid black;
+                }
+
+                @each $name, $color in ("notice": rgba(0, 0, 255, .1), "warn": rgba(255, 255, 0, .5), "error": rgba(255, 0, 0, .5)) {
+                    &.#{$name} {
+                        background-color: $color;
+                    }
+                }
+            }
+            thead {
+                tr:first-child td, tr:first-child th {
+                    border-top: 1px solid black;
+                }
+
+                tr:nth-child(1) th {
+                    position: sticky;
+                    top: 0;
+                }
+    
+                tr:nth-child(2) th {
+                    position: sticky;
+                    top: 23px;
+                }
+            }
+        }
+    }
+}
