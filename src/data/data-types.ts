@@ -28,7 +28,7 @@ type Key<Prefix extends string> = `@${Prefix}${number}@`;
 export type SubKey = Key<'SUB'>;
 export type PersonKey = Key<'I'>;
 export type FamilyKey = Key<'F'>;
-// export type NoteKey = Key<'N'>;
+export type NoteKey = Key<'N'>;
 export type SourceKey = Key<'S'>;
 
 // ----
@@ -38,7 +38,7 @@ export interface RootData {
     [key: SubKey]: Sub;
     [key: PersonKey]: Person;
     [key: FamilyKey]: Family;
-    // [key: NoteKey]: Note;
+    [key: NoteKey]: Note;
     [key: SourceKey]: Source;
     TRLR: StringValueOnly<null>;
 }
@@ -122,6 +122,8 @@ export interface Person extends StringValueOnly<EntryType.INDI>, HasUID {
     BURI?: PersonBurial;
     /** occupancy */
     OCCU?: StringValueOnly;
+    /** residence */
+    // RESI?: PersonResidence;
 }
 
 // ----
@@ -142,11 +144,11 @@ export interface Family extends StringValueOnly<EntryType.FAM>, HasUID {
 
 // ----
 
-// export interface Note extends StringValueOnly<EntryType.NOTE>, HasUID {
-//     /** content */
-//     CONT: StringValueOnly;
-//     CHAN: Change;
-// }
+export interface Note extends StringValueOnly<EntryType.NOTE>, HasUID {
+    /** content */
+    CONT: StringValueOnly;
+    CHAN: Change;
+}
 
 // ----
 

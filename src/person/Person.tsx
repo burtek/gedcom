@@ -2,13 +2,12 @@ import classNames from 'classnames';
 import { memo } from 'react';
 
 import { useConfig } from '../data/config-context';
-import { getAge } from '../data/utils';
 
 import { BirthCell } from './PersonBirth';
 import { BurialCell } from './PersonBurial';
 import { DeathCell } from './PersonDeath';
+import { LinksCell } from './PersonLinks';
 import { NameCell } from './PersonName';
-import { SearchCell } from './PersonSearch';
 import type { MappedPerson } from './map';
 
 
@@ -23,11 +22,11 @@ function Component({ person }: Props) {
             <td className={classNames({ notice: !person.references.hasOwnFamily })}>{person.references.hasOwnFamily ? 'true' : 'false'}</td>
             <BirthCell birth={person.dates.birth} />
             <td>
-                {getAge(person.dates.birth?.date, person.dates.death?.date)}
+                {person.age}
             </td>
             <DeathCell {...person.dates} />
             <BurialCell {...person.dates} />
-            {showUtils ? <SearchCell person={person} /> : null}
+            {showUtils ? <LinksCell person={person} /> : null}
         </tr>
     );
 }

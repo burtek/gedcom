@@ -13,7 +13,7 @@ function Component({ birth, death, burial }: Props) {
     if (!burial) {
         return (
             <td className={classNames({ error: Boolean(death), warn: ageAbove100 })}>
-                <i>no burial?</i>
+                <i>{death ? 'no burial info!' : null}</i>
             </td>
         );
     }

@@ -4,6 +4,7 @@ import { useConfig } from '../data/config-context';
 import { useContextData } from '../data/data-context';
 import type { Person, PersonKey, RootData } from '../data/data-types';
 import { EntryType } from '../data/data-types';
+import { useSearchContext } from '../data/search-context';
 
 import { Person as PersonComponent } from './Person';
 import { mapPerson } from './map';
@@ -16,9 +17,12 @@ const Component = ({ show = false }) => {
     const persons = useMemo(
         () => data && Object.entries(data)
             .filter((f): f is [PersonKey, Person] => (f[1] as RootData[keyof RootData]).value === EntryType.INDI)
-            .map(([apid, datum]) => mapPerson(apid, datum, data)),
+            .map(([apid, datum]) => mapPerson(apid, datum, data))
+            .sort(({ apid: apid1 }, { apid: apid2 }) => apid1.localeCompare(apid2, 'en', { numeric: true })),
         [data]
     );
+
+    const search = useSearchContext();
 
     if (!show) {
         return null;
@@ -47,7 +51,10 @@ const Component = ({ show = false }) => {
                 </tr>
             </thead>
             <tbody>
-                {persons?.map(person => (
+                {persons?.filter(person => !search || [
+                    person.names.some(name => name.name.toLowerCase().includes(search.toLowerCase())),
+                    person.names.some(name => name.surname?.toLowerCase().includes(search.toLowerCase()))
+                ].some(Boolean)).map(person => (
                     <PersonComponent
                         key={person.apid}
                         person={person}

@@ -5,6 +5,7 @@ import './index.scss';
 import { Families } from './Families';
 import { useConfig } from './data/config-context';
 import { useContextData, useContextDataSetter } from './data/data-context';
+import { SearchContextProvider } from './data/search-context';
 import { Persons } from './person';
 
 
@@ -32,8 +33,13 @@ function App() {
         }
     };
 
+    const [search, setSearch] = useState('');
+    const onChangeSearch = useCallback<ChangeEventHandler<HTMLInputElement>>(event => {
+        setSearch(event.target.value);
+    }, []);
+
     return (
-        <>
+        <SearchContextProvider value={search}>
             <div>
                 <input
                     type="file"
@@ -63,6 +69,13 @@ function App() {
                     </button>
                 ))}
             </div>
+            <div>
+                <input
+                    type="text"
+                    value={search}
+                    onChange={onChangeSearch}
+                />
+            </div>
             <div className="data">
                 <pre style={{
                     display: view === View.RAW ? 'block' : 'none',
@@ -75,7 +88,7 @@ function App() {
                 <Persons show={view === View.PERSONS} />
                 <Families show={view === View.FAMILIES} />
             </div>
-        </>
+        </SearchContextProvider>
     );
 }
 App.displayName = 'App';

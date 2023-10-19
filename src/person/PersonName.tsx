@@ -11,7 +11,7 @@ function Component({ person }: { person: MappedPerson }) {
     const className = classNames({
         error: !birthName,
         notice: birthName && [
-            !marriedName && person.sex === 'F',
+            !marriedName && person.sex === 'F' && (!person.age || person.age >= 18),
             marriedName && (
                 person.names.length > 2
                 || !birthName.surname
