@@ -13,21 +13,55 @@ import type { MappedPerson } from './map';
 
 function Component({ person }: Props) {
     const [{ showUtils }] = useConfig();
+    const hasFamilyWarning = !person.references.hasOwnFamily && (person.age && person.age >= 18);
     return (
-        <tr>
-            <td>{person.apid}</td>
-            <td className={classNames({ error: person.sex === 'U' })}>{person.sex}</td>
-            <NameCell person={person} />
-            <td className={classNames({ warn: !person.references.hasParentFamily })}>{person.references.hasParentFamily ? 'true' : 'false'}</td>
-            <td className={classNames({ notice: !person.references.hasOwnFamily })}>{person.references.hasOwnFamily ? 'true' : 'false'}</td>
-            <BirthCell birth={person.dates.birth} />
-            <td>
-                {person.age}
-            </td>
-            <DeathCell {...person.dates} />
-            <BurialCell {...person.dates} />
-            {showUtils ? <LinksCell person={person} /> : null}
-        </tr>
+        <>
+            <tr>
+                <td>{person.xref}</td>
+                <NameCell
+                    rowSpan={2}
+                    person={person}
+                />
+                <td
+                    rowSpan={2}
+                    className={classNames({ warn: !person.references.hasParentFamily })}
+                >
+                    {person.references.hasParentFamily ? 'true' : 'false'}
+                </td>
+                <td
+                    rowSpan={2}
+                    className={classNames({ notice: hasFamilyWarning })}
+                >
+                    {person.references.hasOwnFamily ? 'true' : 'false'}
+                </td>
+                <BirthCell
+                    rowSpan={2}
+                    birth={person.dates.birth}
+                />
+                <td rowSpan={2}>
+                    {person.age}
+                </td>
+                <DeathCell
+                    rowSpan={2}
+                    {...person.dates}
+                />
+                <BurialCell
+                    rowSpan={2}
+                    {...person.dates}
+                />
+                {showUtils
+                    ? (
+                        <LinksCell
+                            rowSpan={2}
+                            person={person}
+                        />
+                    )
+                    : null}
+            </tr>
+            <tr>
+                <td className={classNames({ error: person.sex === 'U' })}>{person.sex}</td>
+            </tr>
+        </>
     );
 }
 Component.displayName = 'Person';

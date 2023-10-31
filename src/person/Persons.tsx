@@ -2,8 +2,7 @@ import { memo, useMemo } from 'react';
 
 import { useConfig } from '../data/config-context';
 import { useContextData } from '../data/data-context';
-import type { Person, PersonKey, RootData } from '../data/data-types';
-import { EntryType } from '../data/data-types';
+import { filterPersons } from '../data/filters';
 import { useSearchContext } from '../data/search-context';
 
 import { Person as PersonComponent } from './Person';
@@ -15,10 +14,9 @@ const Component = ({ show = false }) => {
     const [{ showUtils }] = useConfig();
 
     const persons = useMemo(
-        () => data && Object.entries(data)
-            .filter((f): f is [PersonKey, Person] => (f[1] as RootData[keyof RootData]).value === EntryType.INDI)
-            .map(([apid, datum]) => mapPerson(apid, datum, data))
-            .sort(({ apid: apid1 }, { apid: apid2 }) => apid1.localeCompare(apid2, 'en', { numeric: true })),
+        () => data?.filter(filterPersons)
+            .map(person => mapPerson(person, data))
+            .sort(({ xref: apid1 }, { xref: apid2 }) => apid1.localeCompare(apid2, 'en', { numeric: true })),
         [data]
     );
 
@@ -32,13 +30,13 @@ const Component = ({ show = false }) => {
         <table>
             <thead>
                 <tr>
-                    <th colSpan={3} />
+                    <th>appID</th>
+                    <th />
                     <th colSpan={2}>has</th>
                     <th colSpan={4}>dates</th>
                     {showUtils ? <th /> : null}
                 </tr>
                 <tr>
-                    <th>appID</th>
                     <th>sex</th>
                     <th>names</th>
                     <th>parents</th>
@@ -52,11 +50,11 @@ const Component = ({ show = false }) => {
             </thead>
             <tbody>
                 {persons?.filter(person => !search || [
-                    person.names.some(name => name.name.toLowerCase().includes(search.toLowerCase())),
+                    person.names.some(name => name.name?.toLowerCase().includes(search.toLowerCase())),
                     person.names.some(name => name.surname?.toLowerCase().includes(search.toLowerCase()))
                 ].some(Boolean)).map(person => (
                     <PersonComponent
-                        key={person.apid}
+                        key={person.xref}
                         person={person}
                     />
                 ))}

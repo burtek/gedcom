@@ -2,23 +2,27 @@ import type { ChangeEventHandler } from 'react';
 import { memo, useCallback, useState } from 'react';
 
 import './index.scss';
-import { Families } from './Families';
 import { useConfig } from './data/config-context';
 import { useContextData, useContextDataSetter } from './data/data-context';
 import { SearchContextProvider } from './data/search-context';
+import { Families } from './families';
+import { Graves } from './graves';
 import { Persons } from './person';
+import { Report } from './report';
 
 
 enum View {
+    REPORT = 'Report',
     PERSONS = 'Persons',
     FAMILIES = 'Families',
-    RAW = 'Raw data'
+    RAW = 'Raw data',
+    GRAVES = 'Graves'
     // CALENDAR = 'Calendar' // TODO
 }
 
 function App() {
     const data = useContextData();
-    const [view, setView] = useState(View.PERSONS);
+    const [view, setView] = useState(View.REPORT);
 
     const parseFile = useContextDataSetter();
 
@@ -74,6 +78,7 @@ function App() {
                     type="text"
                     value={search}
                     onChange={onChangeSearch}
+                    placeholder="Search"
                 />
             </div>
             <div className="data">
@@ -87,6 +92,8 @@ function App() {
                 </pre>
                 <Persons show={view === View.PERSONS} />
                 <Families show={view === View.FAMILIES} />
+                <Report show={view === View.REPORT} />
+                <Graves show={view === View.GRAVES} />
             </div>
         </SearchContextProvider>
     );

@@ -1,17 +1,50 @@
 import dayjs from 'dayjs';
 
-import type { DateTime, StringValueOnly } from './data-types';
+import { filterPersons, filterSources } from './filters';
+import type { NestedData } from './read-file';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export function makeDate(DATE?: StringValueOnly | DateTime) {
-    if (!DATE?.value) {
+
+// const DATE_VALUE_REGEXP = '(((?<day>\\d{2}) )?(?<month>JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC) )? (<year>\\d{3,})'
+export function makeDate(data?: NestedData) {
+    if (!data?.value) {
         return null;
     }
-    if (!('TIME' in DATE) || !DATE.TIME.value) {
-        return DATE.value;
-    }
+    const { value } = data;
 
-    return `${DATE.value} ${DATE.TIME.value}`;
+    return value
+        .replace('ABT', 'about')
+        .replace('CAL', 'calculated')
+        .replace('EST', 'estimated')
+        .replace('FROM', 'from')
+        .replace('TO', 'to')
+        .replace('BET', 'inbetween')
+        .replace('BEF', 'before')
+        .replace('AFT', 'after');
+
+    // const aboutDate = new RegExp(`^(?:(?<word>ABT|CAL|EST) )${DATE_VALUE_REGEXP}$`).exec(value)
+    // if (aboutDate?.groups) {
+    //     /* eslint-disable @typescript-eslint/naming-convention */
+    //     const prefix = {
+    //         ABT: 'about',
+    //         CAL: 'calculated',
+    //         EST: 'estimated'
+    //     }[aboutDate.groups.word] ?? '';
+    //     /* eslint-enable @typescript-eslint/naming-convention */
+    //     return `${prefix} ${aboutDate.groups.day} ${aboutDate.groups.month} ${aboutDate.groups.year}`.replace(/ {2,}/g, ' ').trim();
+    // }
+
+    // const rangeDateFrom = new RegExp(`FROM ${DATE_VALUE_REGEXP}`).exec(value);
+    // const rangeDateTo = new RegExp(`FROM ${DATE_VALUE_REGEXP}`).exec(value);
+    // if (rangeDateFrom?.groups || rangeDateTo?.groups) {
+    //     let ret = '';
+    //     if (rangeDateFrom?.groups) {
+    //         ret = `from ${rangeDateFrom.groups.day} ${rangeDateFrom.groups.month} ${rangeDateFrom.groups.year}`
+    //     }
+    //     if (rangeDateTo?.groups) {
+    //         ret += ` to ${rangeDateTo.groups.day} ${rangeDateTo.groups.month} ${rangeDateTo.groups.year}`
+    //     }
+    //     return `${ret} (period)`.replace(/ {2,}/g, ' ').trim();
+    // }
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -50,3 +83,14 @@ export function getAge(birth?: string | null, death?: string | null) {
 
     return (parsedDeath ?? dayjs()).diff(parsedBirth, 'years');
 }
+
+export const getTag = (parent: NestedData, tag: string, ...nestedTags: string[]) => [
+    tag,
+    ...nestedTags
+].reduce<NestedData | undefined>((acc, thisTag) => acc?.children.find(child => child.type === thisTag), parent);
+export const getTags = (parent: NestedData, tag: string, ...nestedTags: string[]) => [
+    tag,
+    ...nestedTags
+].reduce<NestedData[]>((acc, thisTag) => acc.flatMap(a => a.children).filter(child => child.type === thisTag), [parent]);
+export const getPerson = (allData: NestedData[], id: string) => allData.filter(filterPersons).find(datum => datum.data.xref_id === id);
+export const getSource = (allData: NestedData[], id: string) => allData.filter(filterSources).find(datum => datum.data.xref_id === id);

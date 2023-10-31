@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { RootData } from './data-types';
-import { EntryType } from './data-types';
+/* eslint-disable @typescript-eslint/naming-convention */
+import { parse } from 'gedcom';
 
 
 export async function readFile(file: File) {
@@ -16,45 +13,14 @@ export async function readFile(file: File) {
         fileReader.readAsText(file, 'utf-8');
     });
 
-    const lines = content.trim().split(/\r?\n/g);
+    const { children: items } = parse(content);
 
-    const result: Partial<RootData> = {};
-    let prevLevel = 0;
-    let prevNode: any = result;
-    let currentNode: any = null;
-    const parents: any[] = [];
+    return items as NestedData[];
+}
 
-    for (const line of lines) {
-        const [levelStr, tagStr, ...values] = line.split(' ');
-        const value = values.join(' ') || null;
-        const level = Number(levelStr);
-        const tag = tagStr as Uppercase<string>;
-
-        if (level === prevLevel + 1) {
-            parents.push(prevNode);
-            prevNode = currentNode;
-            prevLevel = level;
-        } else if (level < prevLevel) {
-            while (prevLevel > level) {
-                prevLevel--;
-                prevNode = parents.pop();
-            }
-        }
-
-        const data = { value };
-        if (
-            (prevNode.value === EntryType.FAM && tag === 'CHIL')
-            || (prevNode.value === EntryType.INDI && tag === 'NAME')
-            || (tag === 'SOUR' && /^@S\d+@$/.test(value ?? ''))
-        ) {
-            prevNode[tag] ??= [];
-            (prevNode[tag] as any[]).push(data);
-        } else {
-            prevNode[tag] = data;
-        }
-
-        currentNode = data;
-    }
-
-    return result as RootData;
+export interface NestedData {
+    type: string;
+    data: { xref_id?: string; formal_name: string; pointer?: string };
+    children: NestedData[];
+    value: string | undefined;
 }

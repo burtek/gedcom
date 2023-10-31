@@ -4,14 +4,14 @@ import { memo } from 'react';
 import type { MappedPerson } from './map';
 
 
-function Component({ person }: { person: MappedPerson }) {
+function Component({ person, rowSpan }: { person: MappedPerson; rowSpan?: number }) {
     const birthName = person.names.find(n => n.type === 'birth');
     const marriedName = person.names.find(n => n.type === 'married');
 
     const className = classNames({
         error: !birthName,
         notice: birthName && [
-            !marriedName && person.sex === 'F' && (!person.age || person.age >= 18),
+            !marriedName && person.sex === 'F' && (person.age && person.age >= 18),
             marriedName && (
                 person.names.length > 2
                 || !birthName.surname
@@ -23,12 +23,15 @@ function Component({ person }: { person: MappedPerson }) {
     });
 
     return (
-        <td className={className}>
-            {(Array.isArray(person.names) ? person.names : [person.names]).map(
+        <td
+            className={className}
+            rowSpan={rowSpan}
+        >
+            {person.names.map(
                 (name, index) => (
                     // eslint-disable-next-line react/no-array-index-key
                     <div key={index}>
-                        {name.type}: {name.name} {name.surname}
+                        {name.type}{name.lang ? `(${name.lang})` : ''}: {name.name} {name.surname}
                     </div>
                 )
             )}
