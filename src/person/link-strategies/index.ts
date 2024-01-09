@@ -1,5 +1,5 @@
 import { printDateYMD } from '../../store/data/utils';
-import type { MappedPerson } from '../map';
+import type { MappedPerson } from '../../store/person/map';
 
 import { makeOptions } from './make-options';
 
@@ -182,9 +182,9 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
                     'query.facet': 'true',
                     'query.asc': 'false',
                     'query.sortMode': 'YEAR',
-                    'personTree': 'false',
-                    'goComments': 'false',
-                    'searcher': 'big'
+                    personTree: 'false',
+                    goComments: 'false',
+                    searcher: 'big'
                 });
 
                 url.hash = `#${query.toString()}`;
@@ -285,7 +285,7 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
                 generateLink(_person, foundName) {
                     const url = new URL('http://www.genealogiczne.pl/wyszukiwarka-grobow/?cemetary=all');
 
-                    url.searchParams.set('searchPhrase', `${foundName.surname}`);
+                    url.searchParams.set('searchPhrase', foundName.surname);
 
                     return url.toString();
                 }
@@ -295,30 +295,32 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
     {
         name: 'PomGenBaza (pomorskie)',
         strategies() {
-            return [{
-                name: 'Szukaj chrztu',
-                generateLink() {
-                    return 'http://www.ptg.gda.pl/index.php/certificate/action/searchB/';
-                },
-                generatePostRequest(person) {
-                    // TODO: use family info
-                    const birth = person.dates.birth?.date?.match(/\d{4}/)?.[0];
-                    const [from, to] = birth ? [Number(birth)-1, Number(birth)+1] : [1700, 2000];
+            return [
+                {
+                    name: 'Szukaj chrztu',
+                    generateLink() {
+                        return 'http://www.ptg.gda.pl/index.php/certificate/action/searchB/';
+                    },
+                    generatePostRequest(person) {
+                        // TODO: use family info
+                        const birth = person.dates.birth?.date?.match(/\d{4}/)?.[0];
+                        const [from, to] = birth ? [Number(birth) - 1, Number(birth) + 1] : [1700, 2000];
 
-                    return {
-                        action: 'listB',
-                        'search[_fromyear]': from,
-                        'search[_toyear]': to,
-                        'search[parish]': 0,
-                        'search[_name_ch]': (person.names.find(name => name.type === 'birth') ?? person.names[0])?.name ?? '',
-                        'search[_name_m]': '',
-                        'search[_surname_m]': (person.names.find(name => name.type === 'birth') ?? person.names[0])?.surname ?? '',
-                        'search[_name_w]': '',
-                        'search[_surname_w]': '',
-                        'search[_method]': 1
-                    };
+                        return {
+                            action: 'listB',
+                            'search[_fromyear]': from,
+                            'search[_toyear]': to,
+                            'search[parish]': 0,
+                            'search[_name_ch]': (person.names.find(name => name.type === 'birth') ?? person.names[0])?.name ?? '',
+                            'search[_name_m]': '',
+                            'search[_surname_m]': (person.names.find(name => name.type === 'birth') ?? person.names[0])?.surname ?? '',
+                            'search[_name_w]': '',
+                            'search[_surname_w]': '',
+                            'search[_method]': 1
+                        };
+                    }
                 }
-            }];
+            ];
         }
     }
 ];
