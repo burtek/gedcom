@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import { Fragment, memo } from 'react';
+import { memo } from 'react';
 
-import { FULL_DATE_REGEXP, getAge } from '../data/utils';
+import { FULL_DATE_REGEXP, getAge } from '../store/data/utils';
+import type { MappedPerson } from '../store/person/map';
 
-import type { MappedPerson } from './map';
+import { SourcesIndicator } from './SourcesIndicator';
 
 
 function Component({ birth, death, burial, rowSpan }: Props) {
@@ -17,12 +18,13 @@ function Component({ birth, death, burial, rowSpan }: Props) {
                 rowSpan={rowSpan}
             >
                 <i>{death ? 'no burial info!' : null}</i>
+                <SourcesIndicator sources={undefined} />
             </td>
         );
     }
 
     const className = classNames({
-        warn: ageAbove100 || burial.links.length === 0,
+        warn: ageAbove100,
         notice: !burial.date || !FULL_DATE_REGEXP.test(burial.date) || !burial.place
     });
 
@@ -35,20 +37,7 @@ function Component({ birth, death, burial, rowSpan }: Props) {
             {burial.date ?? <i>date?</i>}
             <br />
             {burial.place ?? <i>place?</i>}
-            <br />
-            {burial.links.map(({ page, link, name }, index, { length }) => (
-                <Fragment key={link}>
-                    <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                    >
-                        {name}
-                        {page ? `, page: ${page}` : ''}
-                    </a>
-                    {index + 1 < length ? ', ' : ''}
-                </Fragment>
-            ))}
+            <SourcesIndicator sources={burial.sources} />
         </td>
     );
 }

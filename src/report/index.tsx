@@ -1,21 +1,11 @@
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import { useContextData } from '../data/data-context';
-import { filterPersons } from '../data/filters';
-import { mapPerson } from '../person/map';
+import { useAppSelector } from '../store';
+import { getPersons } from '../store/person/slice';
 
 
 function Component({ show = false }) {
-    const data = useContextData();
-    // eslint-disable-next-line no-console
-    console.log(data);
-
-    const persons = useMemo(
-        () => data?.filter(filterPersons)
-            .map(person => mapPerson(person, data))
-            .sort(({ xref: apid1 }, { xref: apid2 }) => apid1.localeCompare(apid2, 'en', { numeric: true })),
-        [data]
-    );
+    const persons = useAppSelector(getPersons);
 
     if (!show) {
         return null;
@@ -23,17 +13,14 @@ function Component({ show = false }) {
 
     return (
         <div className="report">
-            {persons?.map(person => {
-                const name = `${person.names[0]?.surname} ${person.names[0]?.name}`;
-                return (
-                    <div
-                        className="report__person"
-                        key={person.xref}
-                    >
-                        <div className="report__person__name">{name}</div>
-                    </div>
-                );
-            })}
+            {persons.map(person => (
+                <div
+                    className="report__person"
+                    key={person.id}
+                >
+                    <div className="report__person__name">{`${person.names[0]?.surname} ${person.names[0]?.name}`}</div>
+                </div>
+            ))}
         </div>
     );
 }

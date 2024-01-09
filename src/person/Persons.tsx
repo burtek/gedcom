@@ -1,33 +1,18 @@
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import { useConfig } from '../data/config-context';
-import { useContextData } from '../data/data-context';
-import { filterPersons } from '../data/filters';
-import { useSearchContext } from '../data/search-context';
+import { useAppSelector } from '../store';
+import { getShowUtils } from '../store/config/slice';
+import { getPersons } from '../store/person/slice';
 
 import { Person as PersonComponent } from './Person';
-import { mapPerson } from './map';
 
 
 const Component = ({ show = false }) => {
-    const data = useContextData();
-    const [{ showUtils }] = useConfig();
-
-    const persons = useMemo(
-        () => data?.filter(filterPersons)
-            .map(person => mapPerson(person, data))
-            .sort(({ xref: apid1 }, { xref: apid2 }) => apid1.localeCompare(apid2, 'en', { numeric: true })),
-        [data]
-    );
-
-    const search = useSearchContext();
-
-    if (!show) {
-        return null;
-    }
+    const showUtils = useAppSelector(getShowUtils);
+    const persons = useAppSelector(getPersons);
 
     return (
-        <table>
+        <table style={{ display: show ? undefined : 'none' }}>
             <thead>
                 <tr>
                     <th>appID</th>
@@ -49,12 +34,9 @@ const Component = ({ show = false }) => {
                 </tr>
             </thead>
             <tbody>
-                {persons?.filter(person => !search || [
-                    person.names.some(name => name.name?.toLowerCase().includes(search.toLowerCase())),
-                    person.names.some(name => name.surname?.toLowerCase().includes(search.toLowerCase()))
-                ].some(Boolean)).map(person => (
+                {persons.map(person => (
                     <PersonComponent
-                        key={person.xref}
+                        key={person.id}
                         person={person}
                     />
                 ))}

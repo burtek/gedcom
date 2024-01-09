@@ -19,6 +19,14 @@ body {
     }
 }
 
+@mixin statuscolors {
+    @each $name, $color in ("notice": rgba(225, 225, 255), "warn": rgba(255, 255, 128), "error": rgba(255, 128, 128)) {
+        &.#{$name} {
+            background-color: $color;
+        }
+    }
+}
+
 #root {
     display: grid;
     grid-template-columns: 1fr;
@@ -38,28 +46,40 @@ body {
                 border-bottom: 1px solid black;
                 border-left: 1px solid black;
 
-                @each $name, $color in ("notice": rgba(0, 0, 255, .1), "warn": rgba(255, 255, 0, .5), "error": rgba(255, 0, 0, .5)) {
-                    &.#{$name} {
-                        background-color: $color;
-                    }
-                }
+                @include statuscolors;
             }
 
             %border-right {
                 td, th {
-                    &:last-child {
+                    &:last-child:not(.no-right-border) {
                         border-right: 1px solid black;
                     }
                 }
             }
 
             tbody tr {
-                &:nth-child(2n+1) {
-                    @extend %border-right;
-                }
+                @extend %border-right;
 
-                td:first-child {
-                    text-align: center;
+                td {
+                    &:first-child {
+                        text-align: center;
+                    }
+
+                    &:has(.source-indicator-icon) {
+                        padding-right: 20px;
+                    }
+
+                    position: relative;
+
+                    .source-indicator-icon {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        width: 1rem;
+                        text-align: center;
+
+                        @include statuscolors;
+                    }
                 }
             }
 
@@ -71,11 +91,13 @@ body {
                 tr:nth-child(1) th {
                     position: sticky;
                     top: 0;
+                    z-index: 1;
                 }
     
                 tr:nth-child(2) th {
                     position: sticky;
                     top: 23px;
+                    z-index: 1;
                 }
 
                 @extend %border-right;

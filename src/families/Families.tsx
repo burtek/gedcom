@@ -1,26 +1,16 @@
-import classNames from 'classnames';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import { useContextData } from '../data/data-context';
-import { filterFamilies } from '../data/filters';
+import { useAppSelector } from '../store';
+import { getFamilies } from '../store/family/slice';
 
-import { mapFamily } from './map';
+import { Family } from './Family';
 
 
 const Component = ({ show = false }) => {
-    const data = useContextData();
-
-    const families = useMemo(
-        () => data?.filter(filterFamilies).map(family => mapFamily(family, data)),
-        [data]
-    );
-
-    if (!show) {
-        return null;
-    }
+    const families = useAppSelector(getFamilies);
 
     return (
-        <table>
+        <table style={{ display: show ? undefined : 'none' }}>
             <thead>
                 <tr>
                     <th />
@@ -38,16 +28,11 @@ const Component = ({ show = false }) => {
                 </tr>
             </thead>
             <tbody>
-                {families?.map(p => (
-                    <tr key={p.id}>
-                        <td>{p.xref}</td>
-                        <td className={classNames({ error: !p.hasWife })}>{p.wife ?? '???'}</td>
-                        <td className={classNames({ error: !p.hasHusband })}>{p.husband ?? '???'}</td>
-                        <td>{p.children}</td>
-                        <td className={classNames({ error: !p.married.date })}>{p.married.date}</td>
-                        <td className={classNames({ error: !p.married.place })}>{p.married.place}</td>
-                        <td className={classNames({ error: !p.married.status })}>{p.married.status}</td>
-                    </tr>
+                {families.map(family => (
+                    <Family
+                        family={family}
+                        key={family.id}
+                    />
                 ))}
             </tbody>
         </table>

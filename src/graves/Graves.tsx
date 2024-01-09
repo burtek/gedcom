@@ -1,9 +1,9 @@
 import { Fragment, memo, useMemo } from 'react';
 
-import { useContextData } from '../data/data-context';
-import { filterPersons } from '../data/filters';
-import type { MappedPerson } from '../person/map';
-import { mapPerson } from '../person/map';
+import { useAppSelector } from '../store';
+import type { MappedPerson } from '../store/person/map';
+import { getPersons } from '../store/person/slice';
+import { getSources } from '../store/source/slice';
 
 
 function getPersonName({ names }: PersonWithGrave) {
@@ -27,7 +27,7 @@ function getPersonName({ names }: PersonWithGrave) {
     };
 }
 interface GroupedPerson {
-    xref: string;
+    id: string;
     name: {
         name: string;
         surname: string;
@@ -48,23 +48,23 @@ function groupByGraves(
     acc[cementary]![grave] ??= [];
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    acc[cementary]![grave]?.push({ xref: person.xref, groups: { cementary, grave }, name: getPersonName(person), burial: person.dates.burial });
+    acc[cementary]![grave]?.push({ id: person.id, groups: { cementary, grave }, name: getPersonName(person), burial: person.dates.burial });
     return acc;
 }
 
 const LOCATION_SPLIT = ' / ';
 const Component = ({ show }: { show: boolean }) => {
-    const data = useContextData();
+    const persons = useAppSelector(getPersons);
+    const sources = useAppSelector(getSources);
     const cementaries = useMemo(
         () => {
-            const dictionary = data?.filter(filterPersons)
-                .map(person => mapPerson(person, data))
+            const dictionary = persons
                 .filter((person): person is PersonWithGrave => Boolean(person.dates.burial?.place))
                 .map(person => {
                     const [cementary, ...location] = person.dates.burial.place.split(LOCATION_SPLIT) as [string, ...string[]];
                     return { person, cementary, grave: location.join(LOCATION_SPLIT) };
                 })
-                .reduce<Record<string, Record<string, GroupedPerson[]>>>(groupByGraves, {}) ?? {};
+                .reduce<Record<string, Record<string, GroupedPerson[]>>>(groupByGraves, {});
 
             return Object.entries(dictionary)
                 .sort(([key1], [key2]) => key1.localeCompare(key2))
@@ -75,16 +75,16 @@ const Component = ({ show }: { show: boolean }) => {
                         .map(([grave, burried]) => ({
                             grave,
                             burried: [...burried].sort(
-                                // eslint-disable-next-line max-len
-                                ({ name: name1 }, { name: name2 }) => name1.surname.localeCompare(name2.surname) || name1.name.localeCompare(name2.name)
+                                ({ name: name1 }, { name: name2 }) =>
+                                    name1.surname.localeCompare(name2.surname) || name1.name.localeCompare(name2.name)
                             )
                         }))
                 }));
         },
-        [data]
+        [persons]
     );
 
-    if (!data || !show) {
+    if (!show) {
         return null;
     }
 
@@ -97,21 +97,25 @@ const Component = ({ show }: { show: boolean }) => {
                         <Fragment key={grave}>
                             <h4>{grave}</h4>
                             <ul>
-                                {burried.map(({ xref, name, burial: { links } }) => (
-                                    <li key={xref}>
+                                {burried.map(({ id, name, burial }) => (
+                                    <li key={id}>
                                         {`${name.name} ${name.surname}`}
-                                        {links
+                                        {burial.sources
                                             .filter(link => link.link)
-                                            .map(link => (
-                                                <a
-                                                    key={link.link}
-                                                    href={link.link}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    {link.name}
-                                                </a>
-                                            ))
+                                            .map(link => {
+                                                const source = link.source ? sources[link.source] : null;
+                                                return (
+                                                    <a
+                                                        key={link.link}
+                                                        href={link.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        title={source?.name}
+                                                    >
+                                                        {source?.shortName}
+                                                    </a>
+                                                );
+                                            })
                                             .flatMap(link => [', ', link])}
                                     </li>
                                 ))}

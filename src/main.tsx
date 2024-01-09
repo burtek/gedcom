@@ -2,11 +2,14 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import App from './App.tsx';
 import './index.scss';
-import { ConfigContextProvider } from './data/config-context.tsx';
-import { DataContextProvider } from './data/data-context.tsx';
+import './polyfills';
+import 'rc-tooltip/assets/bootstrap_white.css';
+import { persistor, store } from './store';
 
 
 const root = document.getElementById('root');
@@ -18,10 +21,13 @@ dayjs.extend(customParseFormat);
 
 ReactDOM.createRoot(root).render(
     <React.StrictMode>
-        <ConfigContextProvider>
-            <DataContextProvider>
+        <Provider store={store}>
+            <PersistGate
+                loading={null}
+                persistor={persistor}
+            >
                 <App />
-            </DataContextProvider>
-        </ConfigContextProvider>
+            </PersistGate>
+        </Provider>
     </React.StrictMode>
 );

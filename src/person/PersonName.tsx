@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
-import type { MappedPerson } from './map';
+import type { MappedPerson } from '../store/person/map';
 
 
 function Component({ person, rowSpan }: { person: MappedPerson; rowSpan?: number }) {

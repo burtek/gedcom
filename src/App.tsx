@@ -2,38 +2,38 @@ import type { ChangeEventHandler } from 'react';
 import { memo, useCallback, useState } from 'react';
 
 import './index.scss';
-import { useConfig } from './data/config-context';
-import { useContextData, useContextDataSetter } from './data/data-context';
-import { SearchContextProvider } from './data/search-context';
+import { SearchContextProvider } from './context/search-context';
 import { Families } from './families';
 import { Graves } from './graves';
 import { Persons } from './person';
 import { Report } from './report';
+import { useAppDispatch, useAppSelector } from './store';
+import { actions, getShowUtils } from './store/config/slice';
+import { readAndParseData } from './store/read-and-parse-data';
 
 
 enum View {
     REPORT = 'Report',
     PERSONS = 'Persons',
     FAMILIES = 'Families',
-    RAW = 'Raw data',
-    GRAVES = 'Graves'
-    // CALENDAR = 'Calendar' // TODO
+    GRAVES = 'Graves',
+    CALENDAR = 'Calendar (TODO)',
+    TREE = 'Tree (TODO)'
 }
 
 function App() {
-    const data = useContextData();
     const [view, setView] = useState(View.REPORT);
 
-    const parseFile = useContextDataSetter();
-
-    const [config, setConfig] = useConfig();
-    const handleToggleUtils = useCallback<ChangeEventHandler<HTMLInputElement>>(event => {
-        setConfig({ showUtils: event.target.checked });
-    }, [setConfig]);
+    const dispatch = useAppDispatch();
+    const showUtils = useAppSelector(getShowUtils);
+    const handleToggleUtils = useCallback(() => {
+        dispatch(actions.toggleShowUtils());
+    }, [dispatch]);
 
     const onChange: ChangeEventHandler<HTMLInputElement> = event => {
-        if (event.target.files?.[0]) {
-            parseFile(event.target.files[0]);
+        const [file] = event.target.files ?? [];
+        if (file) {
+            void dispatch(readAndParseData(file));
         }
     };
 
@@ -48,10 +48,11 @@ function App() {
                 <input
                     type="file"
                     onChange={onChange}
+                    accept=".ged"
                 />
                 <input
                     type="checkbox"
-                    checked={config.showUtils}
+                    checked={showUtils}
                     onChange={handleToggleUtils}
                     id="utils-toggle"
                 />
@@ -82,14 +83,6 @@ function App() {
                 />
             </div>
             <div className="data">
-                <pre style={{
-                    display: view === View.RAW ? 'block' : 'none',
-                    overflow: 'auto',
-                    maxHeight: '90vh'
-                }}
-                >
-                    {JSON.stringify(data, undefined, 4)}
-                </pre>
                 <Persons show={view === View.PERSONS} />
                 <Families show={view === View.FAMILIES} />
                 <Report show={view === View.REPORT} />

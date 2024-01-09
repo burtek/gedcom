@@ -5,8 +5,8 @@ import { defineFlatConfig } from 'eslint-define-config';
 
 export default defineFlatConfig([
     ...await prepareConfig({
-        json: {},
-        react: {}
+        json: true,
+        react: true
     }),
     {
         files: ['**/*.{js,jsx,ts,tsx}'],
@@ -30,6 +30,17 @@ export default defineFlatConfig([
     {
         rules: {
             'quote-props': ['error', 'as-needed', { unnecessary: false }],
+            'no-restricted-imports': [
+                'error', {
+                    paths: [
+                        {
+                            name: 'react-redux',
+                            importNames: ['useSelector', 'useDispatch'],
+                            message: 'Use useAppSelector and useAppDispatch instead.'
+                        }
+                    ]
+                }
+            ],
             '@typescript-eslint/no-magic-numbers': 'off'
         }
     }

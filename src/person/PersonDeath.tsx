@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import { Fragment, memo } from 'react';
+import { memo } from 'react';
 
-import { FULL_DATE_REGEXP, getAge } from '../data/utils';
+import { FULL_DATE_REGEXP, getAge } from '../store/data/utils';
+import type { MappedPerson } from '../store/person/map';
 
-import type { MappedPerson } from './map';
+import { SourcesIndicator } from './SourcesIndicator';
 
 
 function Component({ birth, death, burial, rowSpan }: Props) {
@@ -17,6 +18,7 @@ function Component({ birth, death, burial, rowSpan }: Props) {
                 rowSpan={rowSpan}
             >
                 <i>{burial ? 'no death info!' : null}</i>
+                <SourcesIndicator sources={undefined} />
             </td>
         );
     }
@@ -38,20 +40,7 @@ function Component({ birth, death, burial, rowSpan }: Props) {
             {death.cause ?? <i>cause?</i>}
             <br />
             {death.place ?? <i>place?</i>}
-            <br />
-            {death.links.map(({ page, link, name }, index, { length }) => (
-                <Fragment key={link}>
-                    <a
-                        href={link}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                    >
-                        {name}
-                        {page ? `, page: ${page}` : ''}
-                    </a>
-                    {index + 1 < length ? ', ' : ''}
-                </Fragment>
-            ))}
+            <SourcesIndicator sources={death.sources} />
         </td>
     );
 }

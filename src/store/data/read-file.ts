@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { parse } from 'gedcom';
 
 
@@ -20,6 +19,7 @@ export async function readFile(file: File) {
 
 export interface NestedData {
     type: string;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     data: { xref_id?: string; formal_name: string; pointer?: string };
     children: NestedData[];
     value: string | undefined;
