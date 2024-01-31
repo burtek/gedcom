@@ -11,6 +11,8 @@ const Component = ({ show = false }) => {
     const showUtils = useAppSelector(getShowUtils);
     const persons = useAppSelector(getPersons);
 
+    // eslint-disable-next-line no-warning-comments
+    // TODO: add residence, occupations
     return (
         <table style={{ display: show ? undefined : 'none' }}>
             <thead>

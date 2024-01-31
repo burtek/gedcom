@@ -34,7 +34,7 @@ const Component = ({ family }: Props) => {
     const wife = usePerson(family.wife);
     const search = useSearchContext();
 
-    if (search && ![husband, wife, family.married.place, family.id].some(value => (value ?? '').toLowerCase().includes(search.toLowerCase()))) {
+    if (search && ![husband, wife, family.married.place?.name, family.id].some(value => (value ?? '').toLowerCase().includes(search.toLowerCase()))) {
         return null;
     }
 
@@ -45,7 +45,9 @@ const Component = ({ family }: Props) => {
             <td className={classNames({ error: !wife })}>{wife ?? '???'}</td>
             <td>{family.children}</td>
             <td className={classNames({ error: !family.married.date })}>{family.married.date}</td>
-            <td className={classNames({ error: !family.married.place })}>{family.married.place}</td>
+            <td className={classNames({ error: !family.married.place, warn: family.married.place && !family.married.place.ref })}>
+                {family.married.place?.name}
+            </td>
             <td className={classNames({ error: !family.married.status })}>{family.married.status}</td>
         </tr>
     );

@@ -3,19 +3,27 @@ import { getAge, getTag, getTags, makeDate } from '../data/utils';
 
 
 export function mapPerson(person: NestedData) {
-    const makeBaseDatesObject = (event: NestedData) => ({
-        sources: getTags(event, 'SOUR').map(source => {
-            const page = getTag(source, 'PAGE')?.value;
-            return {
-                source: source.data.pointer,
-                link: page?.startsWith('http') ? page : undefined,
-                page: page?.startsWith('http') ? undefined : page
-            };
-        }),
-        date: makeDate(getTag(event, 'DATE')),
-        place: getTag(event, 'PLAC')?.value,
-        check: getTag(event, 'TYPE')?.value === 'CHECK'
-    });
+    const makeBaseDatesObject = (event: NestedData) => {
+        const place = getTag(event, 'PLAC');
+        return {
+            sources: getTags(event, 'SOUR').map(source => {
+                const page = getTag(source, 'PAGE')?.value;
+                return {
+                    source: source.data.pointer,
+                    link: page?.startsWith('http') ? page : undefined,
+                    page: page?.startsWith('http') ? undefined : page
+                };
+            }),
+            date: makeDate(getTag(event, 'DATE')),
+            place: place
+                ? {
+                    name: place.value,
+                    ref: !!getTag(place, '_LOC')
+                }
+                : null,
+            check: getTag(event, 'TYPE')?.value === 'CHECK'
+        };
+    };
     const makeDatesObject = (event: NestedData | undefined): null | ReturnType<typeof makeBaseDatesObject> => {
         if (!event) {
             return null;
@@ -23,14 +31,16 @@ export function mapPerson(person: NestedData) {
 
         return makeBaseDatesObject(event);
     };
-    const death = makeDatesObject(getTag(person, 'DEAT'));
+    const death = getTag(person, 'DEAT');
     const dates = {
         birth: makeDatesObject(getTag(person, 'BIRT')),
         burial: makeDatesObject(getTag(person, 'BURI')),
-        death: death && {
-            ...death,
-            cause: getTag(person, 'DEAT', 'CAUS')?.value
-        }
+        death: death
+            ? {
+                ...makeDatesObject(death),
+                cause: getTag(death, 'CAUS')?.value
+            }
+            : null
     };
 
     return {

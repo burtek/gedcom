@@ -218,7 +218,7 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
 
             const options = makeOptions(person.names, fromDates, toDates);
 
-            return options.map(([{ name, surname }, birthDate, deathDate]) => ({
+            return options.map<Link>(([{ name, surname }, birthDate, deathDate]) => ({
                 name: [name, surname, birthDate && `from ${birthDate}`, deathDate && `to ${deathDate}`].filter(Boolean).join(' '),
                 // name: `${name} ${surname} ${JSON.stringify({ type, lang })}`,
                 generateLink() {
@@ -242,7 +242,14 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
                         sort3: '1'
                     };
                 }
-            }));
+            })).reduce((acc, option) => {
+                if (acc.set.has(option.name)) {
+                    return acc;
+                }
+                acc.set.add(option.name);
+                acc.result.push(option);
+                return acc;
+            }, { set: new Set<string>(), result: [] as Link[] }).result;
         }
     },
     {
@@ -302,6 +309,7 @@ export const LINKS_STRATEGIES: Array<Link | LinksGroup> = [
                         return 'http://www.ptg.gda.pl/index.php/certificate/action/searchB/';
                     },
                     generatePostRequest(person) {
+                        // eslint-disable-next-line no-warning-comments
                         // TODO: use family info
                         const birth = person.dates.birth?.date?.match(/\d{4}/)?.[0];
                         const [from, to] = birth ? [Number(birth) - 1, Number(birth) + 1] : [1700, 2000];

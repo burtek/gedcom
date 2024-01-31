@@ -34,6 +34,10 @@ body {
     max-height: calc(100vh - #{2 * $margin});
     gap: 4px;
 
+    & > .error {
+        color: red;
+    }
+
     .data {
         overflow: auto;
 
@@ -46,7 +50,9 @@ body {
                 border-bottom: 1px solid black;
                 border-left: 1px solid black;
 
-                @include statuscolors;
+                &, & > span {
+                    @include statuscolors;
+                }
             }
 
             %border-right {

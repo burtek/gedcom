@@ -3,6 +3,7 @@ import { getTag, getTags, makeDate } from '../data/utils';
 
 
 export function mapFamily(family: NestedData) {
+    const marriagePlace = getTag(family, 'MARR', 'PLAC');
     return {
         id: family.data.xref_id as string,
         uid: getTag(family, '_UID')?.value as string,
@@ -14,8 +15,10 @@ export function mapFamily(family: NestedData) {
         children: getTags(family, 'CHIL').length,
         married: {
             date: makeDate(getTag(family, 'MARR', 'DATE')),
-            place: getTag(family, 'MARR', 'PLAC')?.value,
-            status: getTag(family, '_STAT')?.value
+            place: marriagePlace
+                ? { name: marriagePlace.value, ref: getTag(marriagePlace, '_LOC')?.value ?? null }
+                : null,
+            status: getTag(family, '_STAT')?.value ?? null
         }
     };
 }

@@ -49,8 +49,8 @@ function Component({ person }: Props) {
                 <td
                     rowSpan={2}
                     className={classNames({
-                        error: !!person.age && !person.dates.death?.date && person.age > 110,
-                        warn: !!person.age && !person.dates.death?.date && person.age > 90
+                        error: !!person.age && !person.dates.death?.date && person.age >= 100,
+                        warn: !!person.age && !person.dates.death?.date && person.age >= 90
                     })}
                 >
                     {person.age}

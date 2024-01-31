@@ -8,7 +8,7 @@ import { Graves } from './graves';
 import { Persons } from './person';
 import { Report } from './report';
 import { useAppDispatch, useAppSelector } from './store';
-import { actions, getShowUtils } from './store/config/slice';
+import { actions, getShowUtils, getError } from './store/config/slice';
 import { readAndParseData } from './store/read-and-parse-data';
 
 
@@ -22,10 +22,11 @@ enum View {
 }
 
 function App() {
-    const [view, setView] = useState(View.REPORT);
+    const [view, setView] = useState(View.PERSONS);
 
     const dispatch = useAppDispatch();
     const showUtils = useAppSelector(getShowUtils);
+    const error = useAppSelector(getError);
     const handleToggleUtils = useCallback(() => {
         dispatch(actions.toggleShowUtils());
     }, [dispatch]);
@@ -65,7 +66,7 @@ function App() {
                     <button
                         key={v}
                         type="button"
-                        disabled={v === view}
+                        disabled={v === view || v.endsWith(' (TODO)')}
                         onClick={() => {
                             setView(v);
                         }}
@@ -81,6 +82,9 @@ function App() {
                     onChange={onChangeSearch}
                     placeholder="Search"
                 />
+            </div>
+            <div className="error">
+                {error}
             </div>
             <div className="data">
                 <Persons show={view === View.PERSONS} />

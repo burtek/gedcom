@@ -1,18 +1,22 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
+import { PlaceWithTooltip } from '../components/PlaceWithTooltip';
+import { SourcesIndicator } from '../components/SourcesIndicator';
 import { FULL_DATE_REGEXP } from '../store/data/utils';
 import type { MappedPerson } from '../store/person/map';
 
-import { SourcesIndicator } from './SourcesIndicator';
-
 
 function Component({ birth, rowSpan }: Pick<MappedPerson['dates'], 'birth'> & { rowSpan?: number }) {
-    const className = classNames({
+    const dateClassName = classNames({
         error: !birth?.date,
-        notice: !birth?.place || !FULL_DATE_REGEXP.test(birth.date ?? '')
+        warn: birth?.date && !FULL_DATE_REGEXP.test(birth.date)
     });
-
+    const placeClassName = classNames({
+        error: !birth?.place,
+        warn: !birth?.place?.ref
+    });
+    const className = classNames({ notice: dateClassName || placeClassName });
 
     return (
         <td
@@ -20,9 +24,13 @@ function Component({ birth, rowSpan }: Pick<MappedPerson['dates'], 'birth'> & { 
             rowSpan={rowSpan}
         >
             {birth?.check ? <div className="check">CHECK!!!</div> : null}
-            {birth?.date ?? <i>date?</i>}
+            <span className={dateClassName}>{birth?.date ?? <i>date?</i>}</span>
             <br />
-            {birth?.place ?? <i>place?</i>}
+            <span className={placeClassName}>
+                {birth?.place?.name
+                    ? <PlaceWithTooltip place={birth.place.name} />
+                    : <i>place?</i>}
+            </span>
             <SourcesIndicator sources={birth?.sources} />
         </td>
     );

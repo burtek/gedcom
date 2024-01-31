@@ -29,6 +29,7 @@ const Component: FC<Props> = ({ person, rowSpan }) => {
                     const ref = createRef<HTMLFormElement>();
                     renderedForms.push(
                         <form
+                            key={`${strat.name}-${linkStrat.name}-form`}
                             method="POST"
                             action={link}
                             target="_blank"
@@ -38,7 +39,7 @@ const Component: FC<Props> = ({ person, rowSpan }) => {
                         >
                             {Object.keys(postData).map(key => (
                                 <input
-                                    key={key}
+                                    key={`${strat.name}-${key}`}
                                     name={key}
                                     type="hidden"
                                     value={postData[key]}
@@ -47,16 +48,22 @@ const Component: FC<Props> = ({ person, rowSpan }) => {
                         </form>
                     );
                     return (
-                        <option onClick={() => ref.current?.submit()}>
+                        <option
+                            key={`${strat.name}-${linkStrat.name}`}
+                            onClick={() => ref.current?.submit()}
+                        >
                             {linkStrat.name}
                         </option>
                     );
                 }
 
                 return (
-                    // eslint-disable-next-line react/jsx-handler-names
-                    <option onClick={() => window.open(link, '_blank')}>
-                        {linkStrat.name}family
+                    <option
+                        key={`${strat.name}-${linkStrat.name}`}
+                        // eslint-disable-next-line react/jsx-handler-names
+                        onClick={() => window.open(link, '_blank')}
+                    >
+                        {linkStrat.name}
                     </option>
                 );
             };

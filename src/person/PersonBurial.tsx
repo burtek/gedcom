@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
-import { FULL_DATE_REGEXP, getAge } from '../store/data/utils';
+import { PlaceWithTooltip } from '../components/PlaceWithTooltip';
+import { SourcesIndicator } from '../components/SourcesIndicator';
+import { getAge } from '../store/data/utils';
 import type { MappedPerson } from '../store/person/map';
-
-import { SourcesIndicator } from './SourcesIndicator';
 
 
 function Component({ birth, death, burial, rowSpan }: Props) {
@@ -23,10 +23,9 @@ function Component({ birth, death, burial, rowSpan }: Props) {
         );
     }
 
-    const className = classNames({
-        warn: ageAbove100,
-        notice: !burial.date || !FULL_DATE_REGEXP.test(burial.date) || !burial.place
-    });
+    const dateClassName = classNames({ warn: !burial.date });
+    const placeClassName = classNames({ warn: !burial.place });
+    const className = classNames({ notice: dateClassName || placeClassName });
 
     return (
         <td
@@ -34,9 +33,19 @@ function Component({ birth, death, burial, rowSpan }: Props) {
             rowSpan={rowSpan}
         >
             {burial.check ? <div className="check">CHECK!!!</div> : null}
-            {burial.date ?? <i>date?</i>}
+            <span className={dateClassName}>{burial.date ?? <i>date?</i>}</span>
             <br />
-            {burial.place ?? <i>place?</i>}
+            <span className={placeClassName}>
+                {burial.place?.name
+                    ? (
+                        <PlaceWithTooltip
+                            place={burial.place.name}
+                            restSingleLine
+                            separator=" / "
+                        />
+                    )
+                    : <i>place?</i>}
+            </span>
             <SourcesIndicator sources={burial.sources} />
         </td>
     );

@@ -61,7 +61,7 @@ const Component = ({ show }: { show: boolean }) => {
             const dictionary = persons
                 .filter((person): person is PersonWithGrave => Boolean(person.dates.burial?.place))
                 .map(person => {
-                    const [cementary, ...location] = person.dates.burial.place.split(LOCATION_SPLIT) as [string, ...string[]];
+                    const [cementary, ...location] = person.dates.burial.place.name?.split(LOCATION_SPLIT) as [string, ...string[]];
                     return { person, cementary, grave: location.join(LOCATION_SPLIT) };
                 })
                 .reduce<Record<string, Record<string, GroupedPerson[]>>>(groupByGraves, {});

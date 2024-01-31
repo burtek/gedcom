@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { memo } from 'react';
 
+import { PlaceWithTooltip } from '../components/PlaceWithTooltip';
+import { SourcesIndicator } from '../components/SourcesIndicator';
 import { FULL_DATE_REGEXP, getAge } from '../store/data/utils';
 import type { MappedPerson } from '../store/person/map';
-
-import { SourcesIndicator } from './SourcesIndicator';
 
 
 function Component({ birth, death, burial, rowSpan }: Props) {
@@ -23,11 +23,15 @@ function Component({ birth, death, burial, rowSpan }: Props) {
         );
     }
 
-    const className = classNames({
+    const dateClassName = classNames({
         error: !death.date,
-        warn: ageAbove100 || !FULL_DATE_REGEXP.test(death.date ?? ''),
-        notice: !death.cause || !death.place
+        warn: ageAbove100 || (death.date && !FULL_DATE_REGEXP.test(death.date))
     });
+    const placeClassName = classNames({
+        error: !death.place,
+        warn: !death.place?.ref
+    });
+    const className = classNames({ notice: dateClassName || placeClassName });
 
     return (
         <td
@@ -35,11 +39,13 @@ function Component({ birth, death, burial, rowSpan }: Props) {
             rowSpan={rowSpan}
         >
             {death.check ? <div className="check">CHECK!!!</div> : null}
-            {death.date ?? <i>date?</i>}
-            <br />
-            {death.cause ?? <i>cause?</i>}
-            <br />
-            {death.place ?? <i>place?</i>}
+            <span className={dateClassName}>{death.date ?? <i>date?</i>}</span>
+            {death.cause ? <><br />{death.cause}<br /></> : <br />}
+            <span className={placeClassName}>
+                {death.place?.name
+                    ? <PlaceWithTooltip place={death.place.name} />
+                    : <i>place?</i>}
+            </span>
             <SourcesIndicator sources={death.sources} />
         </td>
     );

@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 
-import { filterPersons, filterSources } from './filters';
 import type { NestedData } from './read-file';
 
 
@@ -67,5 +66,3 @@ export const getTags = (parent: NestedData, tag: string, ...nestedTags: string[]
     tag,
     ...nestedTags
 ].reduce<NestedData[]>((acc, thisTag) => acc.flatMap(a => a.children).filter(child => child.type === thisTag), [parent]);
-export const getPerson = (allData: NestedData[], id: string) => allData.filter(filterPersons).find(datum => datum.data.xref_id === id);
-export const getSource = (allData: NestedData[], id: string) => allData.filter(filterSources).find(datum => datum.data.xref_id === id);

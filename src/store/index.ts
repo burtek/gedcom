@@ -7,6 +7,7 @@ import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 
 
 import { reducer as config } from './config/slice';
 import { reducer as families } from './family/slice';
+import { reducer as locations } from './location/slice';
 import { reducer as persons } from './person/slice';
 import { reducer as sources } from './source/slice';
 
@@ -15,6 +16,7 @@ export const store = configureStore({
     reducer: {
         config,
         families,
+        locations,
         persons,
         sources
     },
