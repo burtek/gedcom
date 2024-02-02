@@ -1,6 +1,3 @@
-import { parse } from 'gedcom';
-
-
 export async function readFile(file: File, { patchInput = [] as Array<(lines: string[]) => string[]> } = {}) {
     const fileReader = new FileReader();
     let content = await new Promise<string>((resolve, reject) => {
@@ -20,15 +17,5 @@ export async function readFile(file: File, { patchInput = [] as Array<(lines: st
         content = lines.join('\n');
     }
 
-    const { children: items } = parse(content);
-
-    return items as NestedData[];
-}
-
-export interface NestedData {
-    type: string;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    data: { xref_id?: string; formal_name: string; pointer?: string };
-    children: NestedData[];
-    value: string | undefined;
+    return content;
 }

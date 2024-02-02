@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { createRef, useMemo } from 'react';
 
-import type { MappedPerson } from '../store/person/map';
+import type { MappedPerson } from '../store/data/person';
 
 import type { FoundName, Link } from './link-strategies';
 import { LINKS_STRATEGIES } from './link-strategies';

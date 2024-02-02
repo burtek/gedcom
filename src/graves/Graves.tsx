@@ -1,9 +1,9 @@
 import { Fragment, memo, useMemo } from 'react';
 
 import { useAppSelector } from '../store';
-import type { MappedPerson } from '../store/person/map';
-import { getPersons } from '../store/person/slice';
-import { getSources } from '../store/source/slice';
+import type { MappedPerson } from '../store/data/person';
+import { getPersons } from '../store/data/person';
+import { getSources } from '../store/data/source';
 
 
 function getPersonName({ names }: PersonWithGrave) {

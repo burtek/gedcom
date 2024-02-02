@@ -1,5 +1,6 @@
-import type { NestedData } from '../data/read-file';
-import { getTag } from '../data/utils';
+import type { NestedData } from '../../types/nested-data';
+import { createAppSlice } from '../create-app-slice';
+import { getTag } from '../utils';
 
 
 export function mapLocation(location: NestedData) {
@@ -15,3 +16,9 @@ export function mapLocation(location: NestedData) {
     };
 }
 export type MappedLocation = ReturnType<typeof mapLocation>;
+
+const { adapter, actions, name, reducer, getState } = createAppSlice('locations', '_LOC', mapLocation);
+
+export { actions, name, reducer };
+
+export const getLocations = adapter.getSelectors(getState).selectAll;

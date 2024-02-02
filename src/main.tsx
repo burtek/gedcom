@@ -7,7 +7,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import App from './App.tsx';
 import './index.scss';
-import './polyfills';
 import 'rc-tooltip/assets/bootstrap_white.css';
 import { persistor, store } from './store';
 

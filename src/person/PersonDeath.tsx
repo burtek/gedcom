@@ -3,8 +3,8 @@ import { memo } from 'react';
 
 import { PlaceWithTooltip } from '../components/PlaceWithTooltip';
 import { SourcesIndicator } from '../components/SourcesIndicator';
-import { FULL_DATE_REGEXP, getAge } from '../store/data/utils';
-import type { MappedPerson } from '../store/person/map';
+import type { MappedPerson } from '../store/data/person';
+import { FULL_DATE_REGEXP, getAge } from '../store/utils';
 
 
 function Component({ birth, death, burial, rowSpan }: Props) {

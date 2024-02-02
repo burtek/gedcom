@@ -1,5 +1,6 @@
-import type { NestedData } from '../data/read-file';
-import { getAge, getTag, getTags, makeDate } from '../data/utils';
+import type { NestedData } from '../../types/nested-data';
+import { createAppSlice } from '../create-app-slice';
+import { getAge, getTag, getTags, makeDate } from '../utils';
 
 
 export function mapPerson(person: NestedData) {
@@ -55,10 +56,8 @@ export function mapPerson(person: NestedData) {
             lang: getTag(name, 'LANG')?.value
         })),
         references: {
-            hasParentFamily: Boolean(getTag(person, 'FAMC')?.value),
-            parentFamily: getTag(person, 'FAMC')?.value,
-            hasOwnFamily: Boolean(getTag(person, 'FAMS')?.value),
-            ownFamily: getTag(person, 'FAMS')?.value
+            parentFamily: getTag(person, 'FAMC')?.data.pointer,
+            ownFamily: getTag(person, 'FAMS')?.data.pointer
         },
         age: getAge(dates.birth?.date, dates.death?.date),
         dates,
@@ -68,3 +67,10 @@ export function mapPerson(person: NestedData) {
     };
 }
 export type MappedPerson = ReturnType<typeof mapPerson>;
+
+const { adapter, actions, name, reducer, getState } = createAppSlice('persons', 'INDI', mapPerson);
+
+export { actions, name, reducer };
+
+export const getPersons = adapter.getSelectors(getState).selectAll;
+export const getPerson = adapter.getSelectors(getState).selectById;

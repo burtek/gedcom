@@ -62,18 +62,25 @@ function App() {
                 </label>
             </div>
             <div>
-                {Object.values(View).map(v => (
-                    <button
-                        key={v}
-                        type="button"
-                        disabled={v === view || v.endsWith(' (TODO)')}
-                        onClick={() => {
-                            setView(v);
-                        }}
-                    >
-                        {v}
-                    </button>
-                ))}
+                {Object.values(View).map(v => {
+                    const isCurrentView = v === view;
+                    const fontWeight = isCurrentView ? 'bold' : 'normal';
+                    const onClick = () => {
+                        setView(v);
+                    };
+
+                    return (
+                        <button
+                            key={v}
+                            type="button"
+                            disabled={v.endsWith(' (TODO)')}
+                            onClick={onClick}
+                            style={{ fontWeight }}
+                        >
+                            {v}
+                        </button>
+                    );
+                })}
             </div>
             <div>
                 <input

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import type { NestedData } from './read-file';
+import type { NestedData } from '../types/nested-data';
 
 
 // const DATE_VALUE_REGEXP = '(((?<day>\\d{2}) )?(?<month>JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC) )? (<year>\\d{3,})'

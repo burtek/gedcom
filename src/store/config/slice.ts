@@ -1,9 +1,13 @@
+import type { Action, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import { readAndParseData } from '../read-and-parse-data';
 
+
+const isWorkerErrorEvent = (action: Action): action is PayloadAction<Error | null> =>
+    action.type === 'worker:parser/error';
 
 const { actions, name, reducer: rawReducer } = createSlice({
     name: 'config',
@@ -20,8 +24,8 @@ const { actions, name, reducer: rawReducer } = createSlice({
             .addCase(readAndParseData.pending, state => {
                 state.error = null;
             })
-            .addCase(readAndParseData.rejected, (state, { error }) => {
-                state.error = error.message ?? '';
+            .addMatcher(isWorkerErrorEvent, (state, { payload }) => {
+                state.error = payload?.message ?? '';
             });
     }
 });

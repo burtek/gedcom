@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
 import { useAppSelector } from '../store';
-import { getFamilies } from '../store/family/slice';
+import { getFamilies } from '../store/data/family';
 
 import { Family } from './Family';
 

@@ -2,7 +2,7 @@ import { memo } from 'react';
 
 import { useAppSelector } from '../store';
 import { getShowUtils } from '../store/config/slice';
-import { getPersons } from '../store/person/slice';
+import { getPersons } from '../store/data/person';
 
 import { Person as PersonComponent } from './Person';
 

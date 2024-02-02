@@ -3,9 +3,9 @@ import { memo, useDebugValue } from 'react';
 
 import { useSearchContext } from '../context/search-context';
 import { useAppSelector } from '../store';
-import type { MappedFamily } from '../store/family/map';
-import type { MappedPerson } from '../store/person/map';
-import { getPerson } from '../store/person/slice';
+import type { MappedFamily } from '../store/data/family';
+import type { MappedPerson } from '../store/data/person';
+import { getPerson } from '../store/data/person';
 
 
 const namesToString = ({ names }: MappedPerson) => {

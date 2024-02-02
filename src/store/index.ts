@@ -1,27 +1,30 @@
-/* eslint-disable no-restricted-imports */
+/* eslint-disable no-restricted-imports, import/default */
 import { configureStore } from '@reduxjs/toolkit';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
+import ParserWorker from '../worker/parser?sharedworker';
 
 import { reducer as config } from './config/slice';
-import { reducer as families } from './family/slice';
-import { reducer as locations } from './location/slice';
-import { reducer as persons } from './person/slice';
-import { reducer as sources } from './source/slice';
+import { reducer as families, name as familiesName } from './data/family';
+import { reducer as locations, name as locationsName } from './data/location';
+import { reducer as persons, name as personsName } from './data/person';
+import { reducer as sources, name as sourcesName } from './data/source';
+import { workerMiddleware } from './workers-middleware';
 
 
 export const store = configureStore({
     reducer: {
         config,
-        families,
-        locations,
-        persons,
-        sources
+        [familiesName]: families,
+        [locationsName]: locations,
+        [personsName]: persons,
+        [sourcesName]: sources
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({ serializableCheck: { ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] } })
+            .concat(workerMiddleware({ parser: new ParserWorker() }))
 });
 export const persistor = persistStore(
     store

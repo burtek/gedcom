@@ -1,15 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import 'core-js/proposals/array-grouping-v2';
 
-import { readFile } from './data/read-file';
-import { mapFamily } from './family/map';
-import { actions as families } from './family/slice';
-import { mapLocation } from './location/map';
-import { actions as locations } from './location/slice';
-import { mapPerson } from './person/map';
-import { actions as persons } from './person/slice';
-import { mapSource } from './source/map';
-import { actions as sources } from './source/slice';
+import { readFile } from './read-file';
 
 
 const patchGedKeeper = (lines: string[]) => lines.flatMap((line, index, { [index + 1]: nextLine }) => {
@@ -29,23 +20,8 @@ const patchGedKeeper = (lines: string[]) => lines.flatMap((line, index, { [index
 export const readAndParseData = createAsyncThunk(
     'readAndParseData',
     async (file: File, thunkAPI) => {
-        // eslint-disable-next-line no-warning-comments
-        // TODO: move to webworker, add loader and stuff
-        const data = await readFile(file, { patchInput: [patchGedKeeper] });
+        const fileContent = await readFile(file, { patchInput: [patchGedKeeper] });
 
-        const grouped = Object.groupBy(data, datum => datum.type);
-
-        if (grouped.INDI) {
-            thunkAPI.dispatch(persons.load(grouped.INDI.map(mapPerson)));
-        }
-        if (grouped.FAM) {
-            thunkAPI.dispatch(families.load(grouped.FAM.map(mapFamily)));
-        }
-        if (grouped.SOUR) {
-            thunkAPI.dispatch(sources.load(grouped.SOUR.map(mapSource)));
-        }
-        if (grouped._LOC) {
-            thunkAPI.dispatch(locations.load(grouped._LOC.map(mapLocation)));
-        }
+        thunkAPI.dispatch({ payload: fileContent, type: 'worker:parser/parse' });
     }
 );

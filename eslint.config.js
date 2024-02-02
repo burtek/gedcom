@@ -28,6 +28,11 @@ export default defineFlatConfig([
         }
     },
     {
+        files: ['src/worker/*'],
+        languageOptions: { parserOptions: { project: 'tsconfig.worker.json' } },
+        settings: { 'import/resolver': { typescript: true } }
+    },
+    {
         rules: {
             'quote-props': ['error', 'as-needed', { unnecessary: false }],
             'no-restricted-imports': [

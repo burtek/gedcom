@@ -4,7 +4,8 @@ import { memo } from 'react';
 import { useSearchContext } from '../context/search-context';
 import { useAppSelector } from '../store';
 import { getShowUtils } from '../store/config/slice';
-import type { MappedPerson } from '../store/person/map';
+import { getFamily } from '../store/data/family';
+import type { MappedPerson } from '../store/data/person';
 
 import { BirthCell } from './PersonBirth';
 import { BurialCell } from './PersonBurial';
@@ -16,7 +17,11 @@ import { NameCell } from './PersonName';
 function Component({ person }: Props) {
     const search = useSearchContext();
     const showUtils = useAppSelector(getShowUtils);
-    const hasFamilyWarning = !person.references.hasOwnFamily && (person.age && person.age >= 18);
+
+    const parentsFamily = useAppSelector(state => (person.references.parentFamily ? getFamily(state, person.references.parentFamily) : null));
+    const ownFamily = useAppSelector(state => (person.references.ownFamily ? getFamily(state, person.references.ownFamily) : null));
+
+    const hasFamilyWarning = !ownFamily && (person.age && person.age >= 18);
 
     if (search && ![...person.names.map(n => `${n.name} ${n.surname}`), ...person.occupation, person.id].some(value => value.toLowerCase().includes(search.toLowerCase()))) {
         return null;
@@ -32,15 +37,19 @@ function Component({ person }: Props) {
                 />
                 <td
                     rowSpan={2}
-                    className={classNames({ warn: !person.references.hasParentFamily })}
+                    className={classNames({ warn: !parentsFamily?.husband || !parentsFamily.wife })}
+                    style={{ textAlign: 'center' }}
                 >
-                    {person.references.hasParentFamily ? 'true' : 'false'}
+                    {parentsFamily ? 'true' : 'false'}
                 </td>
                 <td
                     rowSpan={2}
                     className={classNames({ notice: hasFamilyWarning })}
+                    style={{ textAlign: 'center' }}
                 >
-                    {person.references.hasOwnFamily ? 'true' : 'false'}
+                    {ownFamily ? 'true' : 'false'}
+                    <br />
+                    {ownFamily?.children.length}
                 </td>
                 <BirthCell
                     rowSpan={2}

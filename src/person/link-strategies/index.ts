@@ -1,5 +1,5 @@
-import { printDateYMD } from '../../store/data/utils';
-import type { MappedPerson } from '../../store/person/map';
+import type { MappedPerson } from '../../store/data/person';
+import { printDateYMD } from '../../store/utils';
 
 import { makeOptions } from './make-options';
 

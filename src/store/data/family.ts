@@ -1,5 +1,6 @@
-import type { NestedData } from '../data/read-file';
-import { getTag, getTags, makeDate } from '../data/utils';
+import type { NestedData } from '../../types/nested-data';
+import { createAppSlice } from '../create-app-slice';
+import { getTag, getTags, makeDate } from '../utils';
 
 
 export function mapFamily(family: NestedData) {
@@ -12,7 +13,7 @@ export function mapFamily(family: NestedData) {
         husband: getTag(family, 'HUSB')?.data.pointer,
         wife: getTag(family, 'WIFE')?.data.pointer,
 
-        children: getTags(family, 'CHIL').length,
+        children: getTags(family, 'CHIL').map(p => p.data.pointer),
         married: {
             date: makeDate(getTag(family, 'MARR', 'DATE')),
             place: marriagePlace
@@ -23,3 +24,10 @@ export function mapFamily(family: NestedData) {
     };
 }
 export type MappedFamily = ReturnType<typeof mapFamily>;
+
+const { adapter, actions, name, reducer, getState } = createAppSlice('families', 'FAM', mapFamily);
+
+export { actions, name, reducer };
+
+export const getFamilies = adapter.getSelectors(getState).selectAll;
+export const getFamily = adapter.getSelectors(getState).selectById;

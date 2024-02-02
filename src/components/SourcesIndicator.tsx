@@ -4,23 +4,35 @@ import Tooltip from 'rc-tooltip';
 import type { ReactNode } from 'react';
 import { memo, useMemo } from 'react';
 
+import { useAppSelector } from '../store';
+import { getSource } from '../store/data/source';
 
-const Component = ({ sources }: Props) => {
+
+const SingleSource = ({ sourceProps }: { sourceProps: Source }) => {
+    const source = useAppSelector(state => (sourceProps.source ? getSource(state, sourceProps.source) : null));
+
+    return (
+        <a
+            href={sourceProps.link}
+            target="_blank"
+            rel="noreferrer noopener"
+        >
+            {source?.shortName}
+            {sourceProps.page ? `, page: ${sourceProps.page}` : ''}
+        </a>
+    );
+};
+SingleSource.displayName = 'SingleSource';
+
+const Component = ({ sources }: { sources?: Source[] }) => {
     const [hasSources, tooltip] = useMemo<[boolean, ReactNode]>(() => {
         if (!sources || sources.length === 0) {
             return [false, <p key="error">BRAK ŹRÓDŁA</p>];
         }
 
-        const mapped = sources.map(({ page, link, name }, index, { length }) => (
-            <p key={link}>
-                <a
-                    href={link}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                >
-                    {name}
-                    {page ? `, page: ${page}` : ''}
-                </a>
+        const mapped = sources.map((source, index, { length }) => (
+            <p key={source.link ?? source.page}>
+                <SingleSource sourceProps={source} />
                 {index + 1 < length ? ', ' : ''}
             </p>
         ));
@@ -50,12 +62,8 @@ Component.displayName = 'SourcesIndicator';
 
 export const SourcesIndicator = memo(Component);
 
-interface Props {
-    sources?: Source[];
-}
-
 type Source = Partial<{
-    name: string;
     page: string;
     link: string;
+    source: string;
 }>;

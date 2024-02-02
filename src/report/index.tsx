@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
 import { useAppSelector } from '../store';
-import { getPersons } from '../store/person/slice';
+import { getPersons } from '../store/data/person';
 
 
 function Component({ show = false }) {
